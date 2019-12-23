@@ -187,7 +187,7 @@ class DQN(nn.Module):
         x = F.relu(self.linear1(s))
         x = F.relu(self.linear2(x))
         x = self.head(x)
-        if sigma > 0:
+        if self.sigma > 0:
             eps = [self.nb.sample(float(state)) for state in s]
             eps = torch.Tensor(eps)
             return x + eps
@@ -209,7 +209,6 @@ target_net.eval()
 
 optimizer = optim.RMSprop(policy_net.parameters())
 memory = ReplayMemory(10000)
-
 
 steps_done = 0
 
@@ -297,18 +296,26 @@ def optimize_model():
         param.grad.data.clamp_(-1, 1)
     optimizer.step()
 
-num_episodes = 100
+num_episodes = 250
 episodic_rewards = []
 for i_episode in range(num_episodes):
-    if i_episode >= 50:
-        # policy_net = DQN(sigma=sigma).to(device)
-        # target_net = DQN(sigma=sigma).to(device)
-        # target_net.load_state_dict(policy_net.state_dict())
-        # target_net.eval()
-        env.goal = 0.6
-
+    if i_episode == 100:
+        policy_net = DQN(sigma=sigma).to(device)
+        target_net = DQN(sigma=sigma).to(device)
+        target_net.load_state_dict(policy_net.state_dict())
         optimizer = optim.RMSprop(policy_net.parameters())
         memory = ReplayMemory(10000)
+    if i_episode >= 100:
+    #     # policy_net = DQN(sigma=sigma).to(device)
+    #     # target_net = DQN(sigma=sigma).to(device)
+    #     # target_net.load_state_dict(policy_net.state_dict())
+    #     # target_net.eval()
+        env.goal = 0.8
+    #     policy_net.sigma = 0.0
+    #     target_net.sigma = 0.0
+
+        # optimizer = optim.RMSprop(policy_net.parameters())
+        # memory = ReplayMemory(10000)
     #if i_episode % 10 == 0:
         #print(i_episode)
     # Initialize the environment and state
@@ -351,7 +358,7 @@ print(episodic_rewards)
 
 # plt.plot(episodic_rewards)
 # plt.show()
-with open('dpql_t_2_prime.txt', 'a') as fw:
+with open('dpql_ep2_s.txt', 'w') as fw:
     for rr in episodic_rewards:
         fw.write(str(rr))
         fw.write(',')

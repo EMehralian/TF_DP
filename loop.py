@@ -7,17 +7,21 @@ import matplotlib.pyplot as plt
 # sigmas = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 # sigmas = [0.2]
 # for sigma in sigmas:
-#     for seed in range(20):
+#     for seed in range(10):
 #         print(sigma, seed)
 #         sys.argv = ['x', str(seed), str(sigma)]
 #         exec(open('dpql.py').read())
 
 # 'dpql_s_ndp.txt',
 # 'dpql_t_ndp.txt',
-# ,
+
 # , ('dpql_t_3.txt', "eps = 0.3")
 # , ('dpql_t_4.txt', "eps = 0.4")
-file_names = [('dpql_s_ndp.txt', "scratch"),  ('dpql_t_0.txt', "transfer")]
+# ('data/dpql_t_2_prime.txt', " eps = 0.2, goal 0.5 => 0.6"),
+# ,  ('data/dpql_t_0.txt', "no noise, goal 0.5 => 0.6")
+# ('dpql_t_2_prime_prime.txt', " eps = 0.2 =>0, goal 0.5 => 0.6"),
+
+file_names = [('dpql_ep2_s.txt', " eps = 0.2,  goal 0.5 => 0.8 from scratch"),('dpql_ep2_t8.txt', " eps = 0.2 goal 0.5 => 0.6")]#,  ('dpql_ep2_t.txt', " eps = 0.2"),('dpql_ep4_t.txt', " eps = 0.4")]# =>0, goal 0.5 => 0.6")]#, ('dpql_t_0.txt', "no noise, goal 0.5 => 0.6")]
 
 super_data = []
 for file_name, label in file_names:
@@ -26,7 +30,7 @@ for file_name, label in file_names:
     with open(file_name) as f:
         content = f.readlines()
     for x in content:
-        data.append(np.array(x.split(',')[:100]).astype(np.float))
+        data.append(np.array(x.split(',')[:-1]).astype(np.float))
     data = np.array(data)
     super_data.append((data, label))
 
@@ -42,3 +46,4 @@ plt.ylabel("Score")
 # plt.title(title)
 plt.legend()
 plt.show()
+
